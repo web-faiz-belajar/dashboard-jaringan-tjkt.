@@ -12,13 +12,14 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,Arial
 header{padding:24px 16px;background:#111c2e;border-bottom:1px solid var(--line)}
 main{max-width:900px;margin:auto;padding:18px 14px}
 h1{font-size:24px;margin:0 0 6px}
-p{color:var(--muted);line-height:1.5}
+h2{font-size:19px}
+p{color:var(--muted);line-height:1.6}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:16px;margin-bottom:12px}
 .label{font-size:13px;color:var(--muted)}
-.value{font-size:22px;font-weight:700;margin-top:8px;overflow-wrap:anywhere}
+.value{font-size:21px;font-weight:700;margin-top:8px;overflow-wrap:anywhere}
 small{color:var(--muted)}
-button{background:var(--blue);color:#071426;border:0;border-radius:10px;padding:12px 16px;font-weight:700;font-size:15px;cursor:pointer}
+button,.button{display:inline-block;background:var(--blue);color:#071426;border:0;border-radius:10px;padding:12px 16px;font-weight:700;font-size:15px;text-decoration:none;cursor:pointer}
 button:disabled{opacity:.6}
 .green{color:var(--green)}.red{color:var(--red)}
 #log{white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px;line-height:1.7}
@@ -28,19 +29,19 @@ footer{padding:16px;color:var(--muted);font-size:12px;text-align:center}
 <body>
 <header>
   <h1>🌐 Dashboard Jaringan TJKT</h1>
-  <p>Pemantauan koneksi nyata dari browser HP</p>
+  <p>Pemantauan koneksi dari browser HP</p>
 </header>
 <main>
   <div class="grid">
     <section class="card">
       <div class="label">Status browser</div>
       <div class="value" id="online">Memeriksa...</div>
-      <small>Belum menjamin internet berfungsi</small>
+      <small>Status browser, bukan jaminan internet</small>
     </section>
     <section class="card">
       <div class="label">Jenis koneksi</div>
       <div class="value" id="type">Tidak tersedia</div>
-      <small>Jika didukung Chrome</small>
+      <small>Jika didukung browser</small>
     </section>
     <section class="card">
       <div class="label">Perkiraan downlink</div>
@@ -48,40 +49,49 @@ footer{padding:16px;color:var(--muted);font-size:12px;text-align:center}
       <small>Bukan hasil tes kecepatan</small>
     </section>
     <section class="card">
-      <div class="label">Perkiraan RTT browser</div>
+      <div class="label">Perkiraan RTT</div>
       <div class="value" id="rtt">Tidak tersedia</div>
-      <small>Perkiraan browser, bukan ping router</small>
+      <small>Bukan ping router</small>
     </section>
   </div>
 
   <section class="card">
-    <h2>Uji respons server</h2>
-    <p>Ukur waktu respons website ini dari HP kamu. Hasil dipengaruhi internet, server, dan cache jaringan.</p>
-    <button id="test">Mulai tes respons</button>
-    <div class="value" id="latency">Belum diuji</div>
-    <p id="result">Tekan tombol untuk memulai tes.</p>
+    <h2>🚀 Tes download dan upload</h2>
+    <p>Jalankan tes kecepatan melalui layanan pengujian terpisah. Hasil dipengaruhi server yang dipilih, kondisi jaringan, dan perangkat kamu.</p>
+    <a class="button" href="https://librespeed.org/" target="_blank" rel="noopener noreferrer">Buka Tes Kecepatan</a>
+    <p><small>Tes berlangsung di situs layanan tersebut, bukan di server Dashboard TJKT.</small></p>
   </section>
 
   <section class="card">
-    <h2>Riwayat pengujian</h2>
+    <h2>Uji respons website sendiri</h2>
+    <p>Mengukur waktu respons website Dashboard TJKT ini. Ini bukan tes kecepatan download/upload dan bukan ping router.</p>
+    <button id="test">Mulai tes respons</button>
+    <div class="value" id="latency">Belum diuji</div>
+    <p id="result">Tekan tombol untuk memulai.</p>
+  </section>
+
+  <section class="card">
+    <h2>Riwayat tes respons</h2>
     <div id="log">Belum ada hasil tes.</div>
     <p><button id="clear" type="button">Hapus riwayat</button></p>
   </section>
 
   <section class="card">
-    <h2>Batasan akses</h2>
+    <h2>Batasan dan privasi</h2>
     <p>Browser biasa tidak dapat memastikan nama Wi-Fi, kekuatan sinyal, IP lokal, gateway, atau daftar perangkat yang terhubung.</p>
-    <p>Tidak ada data perangkat atau bandwidth simulasi yang ditampilkan pada halaman ini.</p>
+    <p>Saat menggunakan layanan tes eksternal, layanan itu akan menerima koneksi dari alamat IP publik kamu. Periksa kebijakan privasinya sebelum menggunakan fitur tambahan atau berbagi hasil tes.</p>
+    <p>Dashboard ini tidak menyimpan hasil ke server. Riwayat tes respons hanya berada di halaman yang sedang terbuka dan akan hilang saat halaman dimuat ulang.</p>
   </section>
 </main>
-<footer>Dashboard TJKT • Data pengujian dilakukan saat tombol ditekan</footer>
+<footer>Dashboard Jaringan TJKT • Pengujian dilakukan saat diminta</footer>
 
 <script>
 const $ = id => document.getElementById(id);
 
 function updateStatus(){
-  $("online").textContent = navigator.onLine ? "Online*" : "Offline";
-  $("online").className = "value " + (navigator.onLine ? "green" : "red");
+  const online = navigator.onLine;
+  $("online").textContent = online ? "Online*" : "Offline";
+  $("online").className = "value " + (online ? "green" : "red");
 
   const c = navigator.connection ||
             navigator.mozConnection ||
@@ -103,10 +113,10 @@ function updateStatus(){
 window.addEventListener("online", updateStatus);
 window.addEventListener("offline", updateStatus);
 
-if (navigator.connection) {
-  navigator.connection.addEventListener("change", updateStatus);
-}
-
+const connection = navigator.connection ||
+                   navigator.mozConnection ||
+                   navigator.webkitConnection;
+if(connection) connection.addEventListener("change", updateStatus);
 updateStatus();
 
 let historyItems = [];
@@ -115,44 +125,35 @@ $("test").addEventListener("click", async () => {
   const btn = $("test");
   btn.disabled = true;
   $("latency").textContent = "Menguji...";
-  $("result").textContent = "Menghubungi halaman website ini...";
+  $("result").textContent = "Menghubungi website ini...";
   const start = performance.now();
 
   try {
-    const url = location.pathname +
-      "?network_test=" + Date.now();
-
-    const response = await fetch(url, {
-      method: "GET",
-      cache: "no-store"
-    });
-
-    if (!response.ok) {
-      throw new Error("Server merespons HTTP " + response.status);
-    }
+    const response = await fetch(
+      location.pathname + "?check=" + Date.now(),
+      {cache:"no-store"}
+    );
+    if(!response.ok) throw new Error("HTTP " + response.status);
 
     const ms = Math.round(performance.now() - start);
-    const time = new Date().toLocaleString("id-ID");
-
     $("latency").textContent = ms + " ms";
-    $("result").textContent =
-      "Berhasil menerima respons dari website ini.";
-
-    historyItems.unshift(time + " — " + ms + " ms — berhasil");
-    historyItems = historyItems.slice(0, 10);
-    $("log").textContent = historyItems.join("\n");
-  } catch (error) {
-    $("latency").textContent = "Gagal";
-    $("result").textContent =
-      "Tes gagal: " + error.message +
-      ". Periksa internet lalu coba lagi.";
+    $("result").textContent = "Respons website berhasil diterima.";
 
     historyItems.unshift(
-      new Date().toLocaleString("id-ID") + " — tes gagal"
+      new Date().toLocaleString("id-ID") +
+      " — " + ms + " ms — berhasil"
     );
-    historyItems = historyItems.slice(0, 10);
-    $("log").textContent = historyItems.join("\n");
+  } catch(e) {
+    $("latency").textContent = "Gagal";
+    $("result").textContent =
+      "Tes gagal. Periksa koneksi dan coba lagi.";
+
+    historyItems.unshift(
+      new Date().toLocaleString("id-ID") + " — gagal"
+    );
   } finally {
+    historyItems = historyItems.slice(0,10);
+    $("log").textContent = historyItems.join("\n") || "Belum ada hasil tes.";
     btn.disabled = false;
   }
 });
