@@ -1,0 +1,266 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NetMonitor | TJKT Dashboard</title>
+<style>
+:root{--bg:#080d1b;--panel:#111b30;--border:#263956;--blue:#60a5fa;--green:#34d399;--red:#fb7185;--muted:#94a3b8}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at top,#172554,var(--bg) 55%);color:#e5eefc;font:14px Arial,sans-serif;min-height:100vh}
+header{padding:24px 18px 15px;max-width:1200px;margin:auto}
+h1{color:var(--blue);margin:0 0 8px;font-size:28px}
+h2{font-size:17px;margin:0 0 16px}
+p{line-height:1.5}
+.muted{color:var(--muted)}
+main{max-width:1200px;margin:auto;padding:0 18px 30px}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.panel,.stat{background:linear-gradient(145deg,#17233b,var(--panel));border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:15px}
+.stat small{color:var(--muted)}
+.stat strong{display:block;font-size:26px;margin-top:10px}
+.green{color:var(--green)}.red{color:var(--red)}.blue{color:var(--blue)}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+button,input,select{font:inherit;border-radius:8px;padding:10px}
+button{border:0;background:#2563eb;color:white;font-weight:bold;cursor:pointer}
+button.secondary{background:#293850}
+button.danger{background:#9f3150}
+button:active{transform:scale(.97)}
+input,select{background:#0b1426;color:white;border:1px solid var(--border);min-width:0}
+input{flex:1}
+.topology{overflow:hidden;background:#0a1426;border:1px solid var(--border);border-radius:12px;padding:8px}
+svg{display:block;width:100%;height:auto;min-height:180px}
+.link{stroke:#3d5779;stroke-width:3;stroke-dasharray:6 5}
+.node{cursor:pointer}
+.node rect{fill:#172b49;stroke:#4b668c;stroke-width:1.5;rx:10}
+.node text{fill:#e5eefc;font-size:12px;text-anchor:middle}
+.node .state{font-size:10px;fill:var(--green)}
+.node.offline rect{stroke:var(--red);fill:#381d31}
+.node.offline .state{fill:var(--red)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin-top:12px}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:480px}
+th,td{text-align:left;padding:12px 8px;border-bottom:1px solid var(--border)}
+th{color:#93c5fd}
+.status{font-weight:bold}
+.badge{display:inline-block;padding:4px 8px;border-radius:20px;background:#103b35;color:var(--green)}
+.badge.off{background:#421f30;color:var(--red)}
+.progress{height:8px;background:#293850;border-radius:8px;overflow:hidden;margin:12px 0}
+.progress span{display:block;height:100%;width:45%;background:linear-gradient(90deg,#3b82f6,#34d399);transition:width .3s}
+.log{background:#080f1e;border-radius:8px;padding:12px;min-height:65px;white-space:pre-wrap;overflow-wrap:anywhere;color:#a7f3d0}
+footer{text-align:center;color:#64748b;font-size:12px;padding:15px}
+@media(max-width:650px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}header{padding-top:18px}h1{font-size:24px}.panel,.stat{padding:12px}main{padding-left:12px;padding-right:12px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>🌐 NetMonitor</h1>
+  <div class="muted">Dashboard Simulasi Jaringan Komputer • TJKT</div>
+  <p><span class="badge">● MODE SIMULASI</span></p>
+</header>
+
+<main>
+  <div class="grid">
+    <div class="stat"><small>Total Perangkat</small><strong id="total">5</strong></div>
+    <div class="stat"><small>Perangkat Online</small><strong class="green" id="online">5</strong></div>
+    <div class="stat"><small>Perangkat Offline</small><strong class="red" id="offline">0</strong></div>
+    <div class="stat"><small>Bandwidth Simulasi</small><strong id="bandwidth">45 Mbps</strong></div>
+  </div>
+
+  <section class="panel">
+    <h2>🖧 Topologi Jaringan</h2>
+    <div class="topology">
+      <svg id="topology" viewBox="0 0 340 300" role="img" aria-label="Topologi jaringan simulasi">
+        <g class="link">
+          <line x1="170" y1="42" x2="170" y2="98"/>
+          <line x1="170" y1="130" x2="80" y2="190"/>
+          <line x1="170" y1="130" x2="260" y2="190"/>
+          <line x1="80" y1="222" x2="80" y2="255"/>
+          <line x1="260" y1="222" x2="260" y2="255"/>
+        </g>
+        <g class="node" data-id="1" transform="translate(120 10)">
+          <rect width="100" height="32"/><text x="50" y="14">🌐 Router</text><text class="state" x="50" y="26">ONLINE</text>
+        </g>
+        <g class="node" data-id="2" transform="translate(120 98)">
+          <rect width="100" height="32"/><text x="50" y="14">🔀 Switch</text><text class="state" x="50" y="26">ONLINE</text>
+        </g>
+        <g class="node" data-id="3" transform="translate(30 190)">
+          <rect width="100" height="32"/><text x="50" y="14">📶 Access Point</text><text class="state" x="50" y="26">ONLINE</text>
+        </g>
+        <g class="node" data-id="4" transform="translate(210 190)">
+          <rect width="100" height="32"/><text x="50" y="14">🖥 Server</text><text class="state" x="50" y="26">ONLINE</text>
+        </g>
+        <g class="node" data-id="5" transform="translate(30 255)">
+          <rect width="100" height="32"/><text x="50" y="14">💻 PC Client</text><text class="state" x="50" y="26">ONLINE</text>
+        </g>
+        <g class="node" data-id="6" transform="translate(210 255)">
+          <rect width="100" height="32"/><text x="50" y="14">📱 Client Wi-Fi</text><text class="state" x="50" y="26">ONLINE</text>
+        </g>
+      </svg>
+    </div>
+    <div class="legend"><span>🟢 Online</span><span>🔴 Offline</span><span>Garis = koneksi simulasi</span></div>
+    <p class="muted">Ketuk perangkat pada topologi atau pilih perangkat di bawah untuk mengubah statusnya.</p>
+    <div class="toolbar">
+      <select id="deviceSelect" aria-label="Pilih perangkat"></select>
+      <button onclick="toggleSelected()">Ubah Status</button>
+      <button class="secondary" onclick="pingSelected()">Simulasi Ping</button>
+      <button class="secondary" onclick="resetAll()">Reset</button>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>📋 Informasi Perangkat & IP</h2>
+    <div class="toolbar">
+      <input id="search" placeholder="Cari nama atau IP..." oninput="renderTable()" aria-label="Cari perangkat">
+      <button onclick="addDevice()">+ Tambah Perangkat</button>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Perangkat</th><th>IP Address</th><th>Jenis</th><th>Status</th></tr></thead>
+        <tbody id="ipTable"></tbody>
+      </table>
+    </div>
+    <p class="muted">Gateway: 192.168.1.1 • Subnet Mask: 255.255.255.0 • DHCP: simulasi aktif</p>
+  </section>
+
+  <section class="panel">
+    <h2>📈 Monitoring Bandwidth</h2>
+    <div class="grid">
+      <div><small class="muted">Download simulasi</small><strong id="download">30 Mbps</strong></div>
+      <div><small class="muted">Upload simulasi</small><strong id="upload">15 Mbps</strong></div>
+    </div>
+    <div class="progress"><span id="bandwidthBar"></span></div>
+    <svg id="chart" viewBox="0 0 320 100" aria-label="Grafik bandwidth simulasi">
+      <path d="M0 20 H320 M0 50 H320 M0 80 H320" stroke="#263956" fill="none"/>
+      <polyline id="chartLine" points="0,70 40,55 80,62 120,30 160,42 200,20 240,38 280,25 320,35" fill="none" stroke="#60a5fa" stroke-width="3"/>
+    </svg>
+    <p class="muted">Angka dan grafik di atas dibuat secara acak untuk pembelajaran, bukan data internet asli.</p>
+  </section>
+
+  <section class="panel">
+    <h2>🧪 Terminal Simulasi</h2>
+    <div class="toolbar">
+      <button onclick="runCommand('ping')">Ping Gateway</button>
+      <button class="secondary" onclick="runCommand('dhcp')">Cek DHCP</button>
+      <button class="secondary" onclick="runCommand('ip')">Cek IP</button>
+      <button class="secondary" onclick="clearLog()">Bersihkan</button>
+    </div>
+    <div class="log" id="terminal">NetMonitor v1.0
+Sistem simulasi siap.
+Pilih perintah di atas untuk memulai.</div>
+  </section>
+  <footer>NetMonitor TJKT • Proyek pembelajaran jaringan • Mode simulasi</footer>
+</main>
+
+<script>
+const initial=[
+{id:1,name:"Router",ip:"192.168.1.1",type:"Gateway",icon:"🌐",up:true},
+{id:2,name:"Switch",ip:"192.168.1.2",type:"Switch",icon:"🔀",up:true},
+{id:3,name:"Access Point",ip:"192.168.1.3",type:"Wi-Fi",icon:"📶",up:true},
+{id:4,name:"Server",ip:"192.168.1.10",type:"Server",icon:"🖥️",up:true},
+{id:5,name:"PC Client",ip:"192.168.1.20",type:"Client",icon:"💻",up:true},
+{id:6,name:"Client Wi-Fi",ip:"192.168.1.21",type:"Client",icon:"📱",up:true}
+];
+let devices=initial.map(d=>({...d}));
+let nextId=7;
+let selectedId=1;
+let bandwidth=45;
+let chartValues=[70,55,62,30,42,20,38,25,35];
+
+function selected(){return devices.find(d=>d.id===Number(selectedId))}
+function render(){
+ document.getElementById("total").textContent=devices.length;
+ const on=devices.filter(d=>d.up).length;
+ document.getElementById("online").textContent=on;
+ document.getElementById("offline").textContent=devices.length-on;
+ document.getElementById("bandwidth").textContent=bandwidth+" Mbps";
+ document.getElementById("download").textContent=Math.round(bandwidth*2/3)+" Mbps";
+ document.getElementById("upload").textContent=Math.round(bandwidth/3)+" Mbps";
+ document.getElementById("bandwidthBar").style.width=Math.min(100,bandwidth)+"%";
+ renderTable();renderSelect();renderTopology();renderChart();
+}
+function renderSelect(){
+ const el=document.getElementById("deviceSelect");
+ el.innerHTML=devices.map(d=>`<option value="${d.id}">${d.name} (${d.ip})</option>`).join("");
+ if(!devices.some(d=>d.id===Number(selectedId)))selectedId=devices[0]?.id||0;
+ el.value=selectedId;
+}
+function renderTable(){
+ const q=document.getElementById("search").value.toLowerCase();
+ document.getElementById("ipTable").innerHTML=devices.filter(d=>(d.name+" "+d.ip+" "+d.type).toLowerCase().includes(q)).map(d=>`
+ <tr><td>${d.icon} ${d.name}</td><td>${d.ip}</td><td>${d.type}</td>
+ <td><span class="badge ${d.up?"":"off"}">${d.up?"ONLINE":"OFFLINE"}</span></td></tr>`).join("");
+}
+function renderTopology(){
+ document.querySelectorAll(".node").forEach(n=>n.remove());
+ const svg=document.getElementById("topology");
+ const positions=[
+ [120,10],[120,98],[30,190],[210,190],[30,255],[210,255]
+ ];
+ devices.forEach((d,i)=>{
+  let x,y;
+  if(i<6){[x,y]=positions[i]}else{
+   x=20+((i-6)%3)*110;y=255+Math.floor((i-6)/3)*42;
+   if(y>600){return}
+  }
+  const g=document.createElementNS("http://www.w3.org/2000/svg","g");
+  g.setAttribute("class","node"+(d.up?"":" offline"));
+  g.setAttribute("transform",`translate(${x} ${y})`);
+  g.setAttribute("data-id",d.id);
+  g.innerHTML=`<rect width="100" height="32"/><text x="50" y="14">${d.icon} ${d.name.slice(0,12)}</text><text class="state" x="50" y="26">${d.up?"ONLINE":"OFFLINE"}</text>`;
+  g.addEventListener("click",()=>{selectedId=d.id;renderSelect();log("Perangkat dipilih: "+d.name+" ("+d.ip+")");});
+  svg.appendChild(g);
+ });
+}
+function renderChart(){
+ document.getElementById("chartLine").setAttribute("points",chartValues.map((v,i)=>`${i*40},${v}`).join(" "));
+}
+function log(message){
+ document.getElementById("terminal").textContent+="\n> "+message;
+ document.getElementById("terminal").scrollTop=document.getElementById("terminal").scrollHeight;
+}
+function toggleSelected(){
+ selectedId=Number(document.getElementById("deviceSelect").value);
+ const d=selected();
+ if(!d)return;
+ d.up=!d.up;
+ bandwidth=Math.max(0,Math.min(100,bandwidth+(d.up?8:-8)));
+ chartValues.push(20+Math.floor(Math.random()*60));chartValues.shift();
+ render();log(d.name+" sekarang "+(d.up?"ONLINE":"OFFLINE")+" (simulasi).");
+}
+function pingSelected(){
+ const d=selected();if(!d)return;
+ log("PING "+d.ip+" ...");
+ log(d.up?"Balasan dari "+d.ip+": waktu="+(Math.floor(Math.random()*20)+1)+"ms (simulasi)":"Request timed out. Perangkat simulasi offline.");
+}
+function runCommand(cmd){
+ if(cmd==="ping"){
+  const d=devices.find(x=>x.ip==="192.168.1.1");
+  log("ping 192.168.1.1");
+  log(d&&d.up?"Reply from 192.168.1.1: bytes=32 time=1ms (simulasi)":"Request timed out (simulasi).");
+ }else if(cmd==="dhcp"){
+  log("DHCP: SIMULASI AKTIF");
+  log("Pool: 192.168.1.0/24 | Gateway: 192.168.1.1");
+ }else{
+  log("IP konfigurasi simulasi:");
+  devices.forEach(d=>log(d.name+" = "+d.ip));
+ }
+}
+function addDevice(){
+ if(devices.length>=18){alert("Batas simulasi 18 perangkat.");return;}
+ const n=devices.length+1;
+ const ip="192.168.1."+(30+n);
+ devices.push({id:nextId++,name:"Client "+n,ip,type:"Client",icon:"💻",up:true});
+ selectedId=devices[devices.length-1].id;
+ render();log("Perangkat baru ditambahkan: "+ip+" (simulasi).");
+}
+function resetAll(){
+ devices=initial.map(d=>({...d}));nextId=7;selectedId=1;bandwidth=45;
+ chartValues=[70,55,62,30,42,20,38,25,35];
+ render();log("Simulasi direset.");
+}
+function clearLog(){document.getElementById("terminal").textContent="Terminal simulasi dibersihkan.";}
+render();
+</script>
+</body>
+</html>
